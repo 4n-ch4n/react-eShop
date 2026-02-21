@@ -1,73 +1,85 @@
-# React + TypeScript + Vite
+# React Shop
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern e-commerce frontend application built with React 19, TypeScript, and Vite. This project includes a public shop interface, user authentication, and a comprehensive admin dashboard.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Public Shop**: Browse products, filter by category/gender.
+- **Authentication**: Login and Register functionality.
+- **Admin Dashboard**: manage products and view analytics.
+- **Modern UI**: Built with Tailwind CSS v4 and Shadcn UI components.
+- **State Management**: Data fetching and caching with TanStack Query.
+- **Routing**: Client-side routing with React Router v7.
 
-## React Compiler
+## Backend
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+This frontend consumes the generic eShop backend API.
 
-## Expanding the ESLint configuration
+**IMPORTANT:** The backend repository is located here:
+[https://github.com/4n-ch4n/eShop-nest-backend](https://github.com/4n-ch4n/eShop-nest-backend)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Please follow the instructions in the backend repository to set up and run the API server before starting this frontend application.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Framework**: [React 19](https://react.dev/) + [Vite](https://vitejs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Routing**: [React Router 7](https://reactrouter.com/)
+- **Data Fetching**: [TanStack Query v5](https://tanstack.com/query/latest) & Axios
+- **UI Components**: [Shadcn UI](https://ui.shadcn.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Installation & Setup
+
+1. **Clone the repository**
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   # or
+   npm install
+   ```
+
+3. **Configure Environment Variables**
+
+   Create a `.env` file in the root directory based on `.env.template`:
+
+   ```bash
+   cp .env.template .env
+   ```
+
+   Update the `.env` file with your API URL:
+   ```env
+   VITE_API_URL=http://localhost:3000/api
+   ```
+
+4. **Run the Development Server**
+   ```bash
+   pnpm dev
+   # or
+   npm run dev
+   ```
+
+   Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## Project Structure
+
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+src/
+├── admin/          # Admin dashboard pages and components
+│   ├── components/ # Admin-specific components (charts, stats, etc.)
+│   ├── layouts/    # Admin layout wrapper
+│   └── pages/      # Dashboard, Products, etc.
+├── auth/           # Authentication modules
+│   ├── layouts/    # Auth layout wrapper
+│   └── pages/      # Login, Register pages
+├── shop/           # Public shop interface
+│   ├── components/ # Shop-specific components (ProductCard, Grid, etc.)
+│   ├── layouts/    # Main shop layout
+│   └── pages/      # Home, Product details, Gender categories
+├── components/     # Shared UI components (Button, Input, etc.)
+├── lib/            # Utilities and helper functions
+├── mocks/          # Mock data for testing/development
+└── assets/         # Static assets and images
 ```
