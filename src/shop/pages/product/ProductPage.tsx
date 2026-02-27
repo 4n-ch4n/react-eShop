@@ -1,26 +1,16 @@
 import { useState } from 'react';
 import { useParams, Navigate } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
 import { Minus, Plus, ShoppingCart, Star } from 'lucide-react';
-import { getProductAction } from '@/shop/actions/get-product.action';
 import { CustomFullScreenLoader } from '@/components/custom/CustomFullScreenLoader';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { useProduct } from '@/shop/hooks/useProduct';
 
 export const ProductPage = () => {
   const { idSlug } = useParams();
 
-  const {
-    data: product,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['product', idSlug],
-    queryFn: () => getProductAction(idSlug || ''),
-    staleTime: 1000 * 60 * 5,
-    retry: false,
-  });
+  const { data: product, isLoading, isError } = useProduct(idSlug || '');
 
   const [selectedImage, setSelectedImage] = useState<string | null>(
     product?.images[0] ?? null,
