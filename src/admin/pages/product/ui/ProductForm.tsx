@@ -4,18 +4,24 @@ import { useForm } from 'react-hook-form';
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { Button } from '@/components/ui/button';
 import { X, SaveAll, Tag, Plus, Upload } from 'lucide-react';
-import type { Product, Size } from '@/interfaces/product.interface';
 import { cn } from '@/lib/utils';
+import type { Product, Size } from '@/interfaces/product.interface';
 
 interface Props {
   title: string;
   subTitle: string;
   product: Product;
   isPositing: boolean;
-  onSubmit: (productLike: Partial<Product>) => Promise<void>;
+  onSubmit: (
+    productLike: Partial<Product> & { files?: File[] },
+  ) => Promise<void>;
 }
 
 const availableSizes: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+interface FormInput extends Product {
+  files?: File[];
+}
 
 export const ProductForm = ({
   title,
@@ -25,6 +31,7 @@ export const ProductForm = ({
   onSubmit,
 }: Props) => {
   const [dragActive, setDragActive] = useState(false);
+
   const tagsInputRef = useRef<HTMLInputElement>(null);
   const {
     register,
@@ -33,13 +40,14 @@ export const ProductForm = ({
     getValues,
     setValue,
     watch,
-  } = useForm({
+  } = useForm<FormInput>({
     defaultValues: product,
   });
 
   const selectedSizes = watch('sizes');
   const selectedTags = watch('tags');
   const currentStock = watch('stock');
+  const currentFiles = watch('files');
 
   const addTag = () => {
     const newTag = tagsInputRef.current?.value || '';
@@ -86,16 +94,27 @@ export const ProductForm = ({
     e.stopPropagation();
     setDragActive(false);
     const files = e.dataTransfer.files;
-    console.log(files);
+    if (!files) return;
+
+    const currentFiles = getValues('files') || [];
+    setValue('files', [...currentFiles, ...Array.from(files)]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log(files);
+    if (!files) return;
+
+    const currentFiles = getValues('files') || [];
+    setValue('files', [...currentFiles, ...Array.from(files)]);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit(async (data) => {
+        await onSubmit(data);
+        setValue('files', []);
+      })}
+    >
       <div className="flex justify-between items-center">
         <AdminTitle title={title} subTitle={subTitle} />
         <div className="flex justify-end mb-10 gap-4">
@@ -411,13 +430,37 @@ export const ProductForm = ({
                           className="w-full h-full object-cover rounded-lg"
                         />
                       </div>
-                      <button className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <button
+                        type="button"
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      >
                         <X className="h-3 w-3" />
                       </button>
                       <p className="mt-1 text-xs text-slate-600 truncate">
                         {image}
                       </p>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* images to upload */}
+              <div
+                className={cn('mt-6 space-y-3', {
+                  hidden: !currentFiles?.length,
+                })}
+              >
+                <h3 className="text-sm font-medium text-slate-700">
+                  Images to upload
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {currentFiles?.map((file, i) => (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Product"
+                      key={i}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
                   ))}
                 </div>
               </div>

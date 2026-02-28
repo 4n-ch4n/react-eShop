@@ -21,8 +21,9 @@ export const getProductAction = async (idSlug: string): Promise<Product> => {
 
   return {
     ...data,
-    images: data.images.map(
-      (image) => `${import.meta.env.VITE_API_URL}/files/product/${image}`,
-    ),
+    images: data.images.map((image) => {
+      if (image.includes('http')) return image;
+      return `${import.meta.env.VITE_API_URL}/files/product/${image}`;
+    }),
   };
 };

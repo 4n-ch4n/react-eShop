@@ -30,9 +30,10 @@ export const getProductsAction = async (
 
   const productsWithImageUrl = data.products.map((product) => ({
     ...product,
-    images: product.images.map(
-      (image) => `${import.meta.env.VITE_API_URL}/files/product/${image}`,
-    ),
+    images: product.images.map((image) => {
+      if (image.includes('http')) return image;
+      return `${import.meta.env.VITE_API_URL}/files/product/${image}`;
+    }),
   }));
 
   return {
